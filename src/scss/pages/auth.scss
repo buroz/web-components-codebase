@@ -1,0 +1,144 @@
+.auth {
+  @apply w-full h-full;
+  @apply flex justify-center;
+
+  & .poster {
+    @apply w-full h-auto bg-gray-400 hidden bg-cover;
+
+    @screen lg {
+      @apply w-1/2 block;
+    }
+  }
+
+  & .form {
+    &-wrapper {
+      @apply w-full bg-white p-5 rounded-lg;
+
+      @screen lg {
+        @apply rounded-l-none w-1/2;
+      }
+
+      .brand {
+        &-wrapper {
+          @apply pt-4;
+        }
+
+        @apply h-10 mx-auto;
+      }
+
+      .slogan {
+        @apply text-sm text-center mt-6 text-gray-500;
+      }
+    }
+
+    @apply px-2 pt-6 pb-8 my-6 bg-white rounded;
+
+    @screen lg {
+      @apply px-16;
+    }
+
+    @screen xl {
+      @apply px-32;
+    }
+
+    & .label {
+      &-wrapper {
+        @apply mb-8;
+      }
+
+      @apply block mb-2 font-semibold text-xs text-gray-700;
+
+      &.password {
+        @apply flex justify-between;
+      }
+    }
+
+    & .input {
+      @apply w-full px-6 py-4;
+      @apply text-sm leading-tight text-gray-700 bg-gray-200;
+      @apply rounded;
+      @apply appearance-none;
+
+      &:focus {
+        @apply outline-none shadow-outline bg-white border-transparent;
+      }
+    }
+
+    & .button {
+      &-wrapper {
+        @apply mb-6 text-center;
+      }
+
+      @apply w-full px-6 py-4 font-semibold text-white rounded bg-black;
+
+      transition: background-color ease-in 150ms;
+
+      &:hover {
+        @apply bg-gray-900 outline-none;
+      }
+
+      &:active {
+        @apply bg-gray-700;
+      }
+
+      &:disabled {
+        @apply bg-gray-400;
+        @apply text-gray-600;
+      }
+    }
+
+    & .link {
+      @apply inline-block text-sm text-blue-500 align-baseline;
+
+      &:hover {
+        @apply text-blue-800;
+      }
+    }
+
+    & .forgot-link {
+      @apply text-xs text-blue-600;
+
+      &:hover {
+        @apply text-blue-400;
+      }
+    }
+
+    & .remember {
+      &-wrapper {
+        @apply flex items-center;
+      }
+
+      @apply ml-2 leading-tight text-xs text-gray-500;
+    }
+
+    & .signup {
+      @apply w-full font-semibold text-center rounded shadow border-t border-gray-200;
+
+      a {
+        @apply text-gray-800;
+        @apply w-full px-6 py-4;
+
+        &:hover {
+          @apply text-gray-600;
+        }
+      }
+    }
+
+    & .copyright {
+      @apply w-full text-center mt-4;
+      @apply text-xs font-light text-gray-600;
+    }
+
+    & .line {
+      @apply mb-6 border-t;
+    }
+  }
+
+  & .error {
+    @apply flex items-center bg-red-600 text-white text-sm font-semibold px-4 py-3 mb-12 rounded;
+
+    & .icon {
+      @apply fill-current w-4 h-4 mr-2;
+    }
+  }
+}

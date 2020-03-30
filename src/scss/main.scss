@@ -1,0 +1,25 @@
+// @import "reset";
+/*
+
+
+*/
+
+@tailwind base;
+// @tailwind components;
+// @tailwind utilities;
+
+@import "pages/auth.scss";
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+
+  min-height: 100% !important;
+  height: 100%;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}

@@ -8,30 +8,34 @@ export class Navbar extends LitElement {
 
   render() {
     return html`
-      <nav class="font-bold text-center md:flex justify-between items-center my-4 mx-auto container overflow-hidden">
-        <a class="flex justify-center items-center" href="/">
-          <img src="brand.svg" class="brand mr-3" alt="scum.land" />
-          scum.land
-        </a>
-        <ul class="text-sm text-gray-700 list-none p-0 md:flex items-center">
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Listen</a></li>
-          <li>
-            <a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Read</a>
-          </li>
-          <li>
-            <a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Buy/Trade</a>
-          </li>
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Contact</a></li>
-        </ul>
-        <ul class="text-sm text-gray-700 list-none p-0 md:flex items-center">
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Log In</a></li>
-          <li>
-            <button class="bg-black hover:bg-gray-600 text-white md:ml-4 py-2 px-3">
-              Sign In
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <section class="navbar">
+        <button class="hamburger">
+          <svg
+            width="24"
+            height="24"
+            class="icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          >
+            <path d="M24 18v1h-24v-1h24zm0-6v1h-24v-1h24zm0-6v1h-24v-1h24z" fill="#1040e2" />
+            <path d="M24 19h-24v-1h24v1zm0-6h-24v-1h24v1zm0-6h-24v-1h24v1z" />
+          </svg>
+        </button>
+        <nav class="nav">
+          <div class="item avatar-wrapper">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="avatar" alt="" />
+            <span class="profile-info">
+              <span class="name">Burak OZ</span>
+              <a href="/profile" class="profile">Profil</a>
+            </span>
+          </div>
+        </nav>
+      </section>
     `;
   }
 }
+
+/*
+
+*/

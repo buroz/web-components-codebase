@@ -1,0 +1,58 @@
+app-navbar {
+  width: 100%;
+  z-index: 665;
+}
+
+.navbar {
+  @apply w-full flex flex-row items-center;
+  @apply p-4;
+  @apply shadow;
+  @apply bg-white;
+
+  @screen xl {
+    @apply p-2;
+  }
+
+  & .hamburger {
+    @apply ml-4;
+
+    & .icon {
+      fill: #666666;
+    }
+  }
+
+  & .nav {
+    @apply flex flex-row items-center;
+    @apply ml-auto;
+
+    & .item {
+      @apply mx-2;
+
+      & .avatar {
+        @apply rounded-full h-10 mr-4;
+      }
+
+      & .profile-info {
+        flex-direction: column;
+        white-space: nowrap;
+        @apply flex items-center justify-center;
+
+        & .name {
+          @apply text-xs leading-tight font-semibold;
+        }
+        & .profile {
+          font-size: 0.6rem;
+
+          @apply mt-1 leading-tight px-2 py-1 text-white font-medium bg-green-600 rounded;
+          &:hover {
+            @apply bg-green-500;
+          }
+        }
+      }
+    }
+  }
+}
+
+.avatar-wrapper {
+  @apply flex flex-row;
+}

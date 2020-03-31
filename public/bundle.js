@@ -25757,6 +25757,123 @@ module.exports = function(originalModule) {
 
 /***/ }),
 
+/***/ "./src/components/auth/forgot-password-form.ts":
+/*!*****************************************************!*\
+  !*** ./src/components/auth/forgot-password-form.ts ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+const pwa_helpers_1 = __webpack_require__(/*! pwa-helpers */ "./node_modules/pwa-helpers/pwa-helpers.js");
+const store_1 = __webpack_require__(/*! ../../store */ "./src/store/index.ts");
+const actions_1 = __webpack_require__(/*! ../../store/actions */ "./src/store/actions/index.ts");
+const validators_1 = __webpack_require__(/*! ../../validators */ "./src/validators/index.ts");
+const utils_1 = __webpack_require__(/*! ../../utils */ "./src/utils/index.ts");
+let ForgotPasswordForm = class ForgotPasswordForm extends pwa_helpers_1.connect(store_1.store)(lit_element_1.LitElement) {
+    constructor() {
+        super(...arguments);
+        this.form = new validators_1.AuthForgotPasswordForm();
+        this.buttonDisabled = false;
+    }
+    createRenderRoot() {
+        return this;
+    }
+    stateChanged(state) {
+        this.hasError = state.auth.hasError;
+        this.error = state.auth.error;
+    }
+    async updateButtonState() {
+        this.buttonDisabled = await utils_1.buttonDisabler(this.form);
+    }
+    formValueChanged(e) {
+        this.form = new validators_1.AuthForgotPasswordForm({
+            ...this.form,
+            [e.target.name]: e.target.value
+        });
+        this.updateButtonState();
+    }
+    async handleSubmit(request) {
+        // maybe async maybe not
+        const res = await actions_1.forgotPasswordAction(this.form);
+        store_1.store.dispatch(res);
+    }
+    errorAlert(message) {
+        return lit_element_1.html `
+      <div class="error" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" height="24" width="24" viewBox="0 0 24 24">
+          <path
+            d="M16.142 2l5.858 5.858v8.284l-5.858 5.858h-8.284l-5.858-5.858v-8.284l5.858-5.858h8.284zm.829-2h-9.942l-7.029 7.029v9.941l7.029 7.03h9.941l7.03-7.029v-9.942l-7.029-7.029zm-8.482 16.992l3.518-3.568 3.554 3.521 1.431-1.43-3.566-3.523 3.535-3.568-1.431-1.432-3.539 3.583-3.581-3.457-1.418 1.418 3.585 3.473-3.507 3.566 1.419 1.417z"
+          />
+        </svg>
+        <p>${message}</p>
+      </div>
+    `;
+    }
+    render() {
+        return lit_element_1.html `
+      <form class="form" @change=${this.formValueChanged}>
+        ${this.hasError ? this.errorAlert(this.error) : null}
+
+        <div class="label-wrapper">
+          <label class="label password" for="email">
+            Email
+            <!--<a class="forgot-link" href="/">Şifremi Hatırlıyorum</a>-->
+          </label>
+
+          <input
+            class="input"
+            id="email"
+            name="email"
+            .value=${this.form.email}
+            type="email"
+            placeholder="Email"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="button-wrapper remember-wrapper">
+          <button
+            ?disabled=${this.buttonDisabled}
+            @click=${(e) => this.handleSubmit({ email: "" })}
+            class="button"
+            type="button"
+          >
+            Gönder
+          </button>
+        </div>
+      </form>
+    `;
+    }
+};
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], ForgotPasswordForm.prototype, "hasError", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", String)
+], ForgotPasswordForm.prototype, "error", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", validators_1.AuthForgotPasswordForm)
+], ForgotPasswordForm.prototype, "form", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], ForgotPasswordForm.prototype, "buttonDisabled", void 0);
+ForgotPasswordForm = tslib_1.__decorate([
+    lit_element_1.customElement("forgot-password-form")
+], ForgotPasswordForm);
+exports.ForgotPasswordForm = ForgotPasswordForm;
+
+
+/***/ }),
+
 /***/ "./src/components/auth/login-form.ts":
 /*!*******************************************!*\
   !*** ./src/components/auth/login-form.ts ***!
@@ -25779,6 +25896,7 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
         super(...arguments);
         this.form = new validators_1.AuthLoginForm();
         this.buttonDisabled = false;
+        this.forgotPassword = false;
     }
     createRenderRoot() {
         return this;
@@ -25815,56 +25933,60 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
     `;
     }
     render() {
-        return lit_element_1.html `
-      <form class="form" @change=${this.formValueChanged}>
-        ${this.hasError ? this.errorAlert(this.error) : null}
+        return this.forgotPassword
+            ? lit_element_1.html `
+          <forgot-password-form />
+        `
+            : lit_element_1.html `
+          <form class="form" @change=${this.formValueChanged}>
+            ${this.hasError ? this.errorAlert(this.error) : null}
 
-        <div class="label-wrapper">
-          <label class="label" for="email">Email</label>
-          <input
-            class="input"
-            id="email"
-            name="email"
-            .value=${this.form.email}
-            type="email"
-            placeholder="Email"
-            autocomplete="on"
-          />
-        </div>
+            <div class="label-wrapper">
+              <label class="label" for="email">Email</label>
+              <input
+                class="input"
+                id="email"
+                name="email"
+                .value=${this.form.email}
+                type="email"
+                placeholder="Email"
+                autocomplete="on"
+              />
+            </div>
 
-        <div class="label-wrapper">
-          <label class="label password" for="password">
-            Şifre
-            <a class="forgot-link" href="./forgot-password.html">Hatırlamıyorum</a>
-          </label>
-          <input
-            class="input"
-            id="password"
-            name="password"
-            .value=${this.form.password}
-            type="password"
-            placeholder="Şifre"
-            autocomplete="on"
-          />
-        </div>
+            <div class="label-wrapper">
+              <label class="label password" for="password">
+                Şifre
+                <a class="forgot-link" @click=${(e) => (this.forgotPassword = true)}>Hatırlamıyorum</a>
+              </label>
+              <input
+                class="input"
+                id="password"
+                name="password"
+                .value=${this.form.password}
+                type="password"
+                placeholder="Şifre"
+                autocomplete="on"
+              />
+            </div>
 
-        <div class="label-wrapper remember-wrapper">
-          <input type="checkbox" id="checkbox_id" />
-          <label class="remember" for="checkbox_id">Beni Hatırla</label>
-        </div>
+            <div class="label-wrapper remember-wrapper">
+              <input type="checkbox" id="checkbox_id" />
+              <label class="remember" for="checkbox_id">Beni Hatırla</label>
+            </div>
 
-        <div class="button-wrapper remember-wrapper">
-          <button
-            ?disabled=${this.buttonDisabled}
-            @click=${(e) => this.handleSubmit({ email: "", password: "" })}
-            class="button"
-            type="button"
-          >
-            Giriş
-          </button>
-        </div>
-      </form>
-    `;
+            <div class="button-wrapper remember-wrapper">
+              <button
+                ?disabled=${this.buttonDisabled}
+                @click=${(e) => this.handleSubmit({ email: "", password: "" })}
+                class="button"
+                type="button"
+              >
+                Giriş
+              </button>
+            </div>
+          </form>
+        `;
     }
 };
 tslib_1.__decorate([
@@ -25883,6 +26005,10 @@ tslib_1.__decorate([
     lit_element_1.property(),
     tslib_1.__metadata("design:type", Boolean)
 ], LoginForm.prototype, "buttonDisabled", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], LoginForm.prototype, "forgotPassword", void 0);
 LoginForm = tslib_1.__decorate([
     lit_element_1.customElement("login-form")
 ], LoginForm);
@@ -26029,7 +26155,7 @@ let RegisterForm = class RegisterForm extends pwa_helpers_1.connect(store_1.stor
             class="button"
             type="button"
           >
-            Giriş
+            Üye Ol
           </button>
         </div>
       </form>
@@ -26078,30 +26204,30 @@ let Navbar = class Navbar extends lit_element_1.LitElement {
     }
     render() {
         return lit_element_1.html `
-      <nav class="font-bold text-center md:flex justify-between items-center my-4 mx-auto container overflow-hidden">
-        <a class="flex justify-center items-center" href="/">
-          <img src="brand.svg" class="brand mr-3" alt="scum.land" />
-          scum.land
-        </a>
-        <ul class="text-sm text-gray-700 list-none p-0 md:flex items-center">
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Listen</a></li>
-          <li>
-            <a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Read</a>
-          </li>
-          <li>
-            <a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Buy/Trade</a>
-          </li>
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Contact</a></li>
-        </ul>
-        <ul class="text-sm text-gray-700 list-none p-0 md:flex items-center">
-          <li><a href="#" class="inline-block py-2 px-3 text-gray-900 hover:text-gray-700 no-underline">Log In</a></li>
-          <li>
-            <button class="bg-black hover:bg-gray-600 text-white md:ml-4 py-2 px-3">
-              Sign In
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <section class="navbar">
+        <button class="hamburger">
+          <svg
+            width="24"
+            height="24"
+            class="icon"
+            xmlns="http://www.w3.org/2000/svg"
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+          >
+            <path d="M24 18v1h-24v-1h24zm0-6v1h-24v-1h24zm0-6v1h-24v-1h24z" fill="#1040e2" />
+            <path d="M24 19h-24v-1h24v1zm0-6h-24v-1h24v1zm0-6h-24v-1h24v1z" />
+          </svg>
+        </button>
+        <nav class="nav">
+          <div class="item avatar-wrapper">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="avatar" alt="" />
+            <span class="profile-info">
+              <span class="name">Burak OZ</span>
+              <a href="/profile" class="profile">Profil</a>
+            </span>
+          </div>
+        </nav>
+      </section>
     `;
     }
 };
@@ -26109,6 +26235,45 @@ Navbar = tslib_1.__decorate([
     lit_element_1.customElement("app-navbar")
 ], Navbar);
 exports.Navbar = Navbar;
+/*
+
+*/
+
+
+/***/ }),
+
+/***/ "./src/components/base/sidebar.ts":
+/*!****************************************!*\
+  !*** ./src/components/base/sidebar.ts ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+let Sidebar = class Sidebar extends lit_element_1.LitElement {
+    createRenderRoot() {
+        return this;
+    }
+    render() {
+        return lit_element_1.html `
+      <section class="sidebar">
+        <figure class="brand-wrapper">
+          <a href="/">
+            <img src="/brand.svg" class="brand" alt="brand" />
+          </a>
+        </figure>
+      </section>
+    `;
+    }
+};
+Sidebar = tslib_1.__decorate([
+    lit_element_1.customElement("app-sidebar")
+], Sidebar);
+exports.Sidebar = Sidebar;
 
 
 /***/ }),
@@ -26125,8 +26290,10 @@ exports.Navbar = Navbar;
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 tslib_1.__exportStar(__webpack_require__(/*! ./base/navbar */ "./src/components/base/navbar.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./base/sidebar */ "./src/components/base/sidebar.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./auth/login-form */ "./src/components/auth/login-form.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./auth/register-form */ "./src/components/auth/register-form.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./auth/forgot-password-form */ "./src/components/auth/forgot-password-form.ts"), exports);
 
 
 /***/ }),
@@ -26178,6 +26345,7 @@ __webpack_require__(/*! ./routes */ "./src/routes/index.ts");
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+tslib_1.__exportStar(__webpack_require__(/*! ./page-home */ "./src/pages/page-home.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./page-auth */ "./src/pages/page-auth.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./page-not-found */ "./src/pages/page-not-found.ts"), exports);
 
@@ -26246,6 +26414,43 @@ PageAuth = tslib_1.__decorate([
     lit_element_1.customElement("page-auth")
 ], PageAuth);
 exports.PageAuth = PageAuth;
+
+
+/***/ }),
+
+/***/ "./src/pages/page-home.ts":
+/*!********************************!*\
+  !*** ./src/pages/page-home.ts ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
+let PageHome = class PageHome extends lit_element_1.LitElement {
+    createRenderRoot() {
+        return this;
+    }
+    render() {
+        return lit_element_1.html `
+      <div class="main-wrapper">
+        ${lit_element_1.html `
+          <app-sidebar />
+        `}
+        ${lit_element_1.html `
+          <app-navbar />
+        `}
+      </div>
+    `;
+    }
+};
+PageHome = tslib_1.__decorate([
+    lit_element_1.customElement("page-home")
+], PageHome);
+exports.PageHome = PageHome;
 
 
 /***/ }),
@@ -26335,11 +26540,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const router_1 = __webpack_require__(/*! @vaadin/router */ "./node_modules/@vaadin/router/dist/vaadin-router.js");
 const guards_1 = __webpack_require__(/*! ./guards */ "./src/routes/guards/index.ts");
 window.addEventListener("load", () => {
-    const router = new router_1.Router(document.querySelector("#root"));
+    const router = new router_1.Router(document.querySelector("body"));
     router.setRoutes([
         {
             path: "/",
-            component: "page-auth",
+            component: "page-home",
             action: guards_1.authGuard
         },
         {
@@ -26354,7 +26559,6 @@ window.addEventListener("load", () => {
             path: "(.*)",
             component: "page-not-found",
             action: guards_1.authGuard
-            // component: "page-not-found"
         }
     ]);
 });
@@ -26391,6 +26595,8 @@ var AUTH_ACTION;
     AUTH_ACTION["LOGOUT_SUCCESS"] = "LOGOUT_SUCCESS";
     AUTH_ACTION["REGISTER_SUCCESS"] = "REGISTER_SUCCESS";
     AUTH_ACTION["REGISTER_ERROR"] = "REGISTER_ERROR";
+    AUTH_ACTION["FORGOT_PASSWORD_SUCCESS"] = "FORGOT_PASSWORD_SUCCESS";
+    AUTH_ACTION["FORGOT_PASSWORD_ERROR"] = "FORGOT_PASSWORD_ERROR";
 })(AUTH_ACTION = exports.AUTH_ACTION || (exports.AUTH_ACTION = {}));
 exports.loginAction = async (request) => {
     try {
@@ -26432,6 +26638,25 @@ exports.registerAction = async (request) => {
         };
     }
 };
+exports.forgotPasswordAction = async (request) => {
+    try {
+        const res = await utils_1.api({
+            url: `/auth/forgot`,
+            method: "POST",
+            data: request
+        });
+        return {
+            type: AUTH_ACTION.FORGOT_PASSWORD_SUCCESS,
+            forgotPasswordStatus: true
+        };
+    }
+    catch (err) {
+        return {
+            type: AUTH_ACTION.FORGOT_PASSWORD_ERROR,
+            error: err.message
+        };
+    }
+};
 exports.logoutAction = () => {
     localStorage.removeItem("token");
     return {
@@ -26456,6 +26681,7 @@ var auth_1 = __webpack_require__(/*! ./auth */ "./src/store/actions/auth.ts");
 exports.loginAction = auth_1.loginAction;
 exports.registerAction = auth_1.registerAction;
 exports.logoutAction = auth_1.logoutAction;
+exports.forgotPasswordAction = auth_1.forgotPasswordAction;
 
 
 /***/ }),
@@ -26527,6 +26753,17 @@ exports.authReducer = (state = exports.INITIAL_STATE, action) => {
             return {
                 ...state,
                 token: ""
+            };
+        case auth_1.AUTH_ACTION.FORGOT_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                forgotPasswordStatus: false
+            };
+        case auth_1.AUTH_ACTION.FORGOT_PASSWORD_ERROR:
+            return {
+                ...state,
+                hasError: true,
+                error: action.error
             };
         default:
             return state;
@@ -26689,6 +26926,19 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Object)
 ], AuthRegisterForm.prototype, "passwordAgain", void 0);
 exports.AuthRegisterForm = AuthRegisterForm;
+class AuthForgotPasswordForm {
+    constructor(request) {
+        this.email = "";
+        if (request) {
+            this.email = request.email;
+        }
+    }
+}
+tslib_1.__decorate([
+    class_validator_1.IsEmail(),
+    tslib_1.__metadata("design:type", Object)
+], AuthForgotPasswordForm.prototype, "email", void 0);
+exports.AuthForgotPasswordForm = AuthForgotPasswordForm;
 
 
 /***/ }),

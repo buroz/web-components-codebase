@@ -1,0 +1,6 @@
+.main {
+  &-wrapper {
+    @apply w-full flex flex-row;
+    min-height: 100%;
+  }
+}

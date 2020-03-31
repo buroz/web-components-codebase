@@ -600,6 +600,120 @@ video {
   height: auto;
 }
 
+app-sidebar {
+  z-index: 666;
+}
+
+.sidebar {
+  background-color: #fff;
+  width: 16rem;
+  height: 100%;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.sidebar .brand {
+  height: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sidebar .brand-wrapper {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+app-navbar {
+  width: 100%;
+  z-index: 665;
+}
+
+.navbar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: #fff;
+}
+
+@media (min-width: 1280px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+}
+
+.navbar .hamburger {
+  margin-left: 1rem;
+}
+
+.navbar .hamburger .icon {
+  fill: #666666;
+}
+
+.navbar .nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+}
+
+.navbar .nav .item {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.navbar .nav .item .avatar {
+  border-radius: 9999px;
+  height: 2.5rem;
+  margin-right: 1rem;
+}
+
+.navbar .nav .item .profile-info {
+  flex-direction: column;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar .nav .item .profile-info .name {
+  font-size: 0.75rem;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.navbar .nav .item .profile-info .profile {
+  font-size: 0.6rem;
+  margin-top: 0.25rem;
+  line-height: 1.25;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  color: #fff;
+  font-weight: 500;
+  background-color: #38a169;
+  border-radius: 0.25rem;
+}
+
+.navbar .nav .item .profile-info .profile:hover {
+  background-color: #48bb78;
+}
+
+.avatar-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.main-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  min-height: 100%;
+}
+
 .auth {
   width: 100%;
   height: 100%;
@@ -856,16 +970,16 @@ video {
 }
 
 html,
-body,
-#root {
+body {
   margin: 0;
   padding: 0;
   min-height: 100% !important;
-  height: 100%;
+  height: 100% !important;
 }
 
 body {
   font-family: "Montserrat", sans-serif;
+  background-color: #edf2f7;
 }
 
 

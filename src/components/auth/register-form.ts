@@ -137,7 +137,7 @@ export class RegisterForm extends connect(store)(LitElement) {
             class="button"
             type="button"
           >
-            Giriş
+            Üye Ol
           </button>
         </div>
       </form>

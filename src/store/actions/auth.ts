@@ -1,4 +1,4 @@
-import { LoginRequest, RegisterRequest } from "../../_interfaces";
+import { LoginRequest, RegisterRequest, ForgotPasswordRequest } from "../../_interfaces";
 import { api } from "../../utils";
 
 export enum AUTH_ACTION {
@@ -6,7 +6,9 @@ export enum AUTH_ACTION {
   LOGIN_ERROR = "LOGIN_ERROR",
   LOGOUT_SUCCESS = "LOGOUT_SUCCESS",
   REGISTER_SUCCESS = "REGISTER_SUCCESS",
-  REGISTER_ERROR = "REGISTER_ERROR"
+  REGISTER_ERROR = "REGISTER_ERROR",
+  FORGOT_PASSWORD_SUCCESS = "FORGOT_PASSWORD_SUCCESS",
+  FORGOT_PASSWORD_ERROR = "FORGOT_PASSWORD_ERROR"
 }
 
 export const loginAction = async (request: LoginRequest) => {
@@ -44,6 +46,25 @@ export const registerAction = async (request: RegisterRequest) => {
   } catch (err) {
     return {
       type: AUTH_ACTION.REGISTER_ERROR,
+      error: err.message
+    };
+  }
+};
+
+export const forgotPasswordAction = async (request: ForgotPasswordRequest) => {
+  try {
+    const res = await api({
+      url: `/auth/forgot`,
+      method: "POST",
+      data: request
+    });
+    return {
+      type: AUTH_ACTION.FORGOT_PASSWORD_SUCCESS,
+      forgotPasswordStatus: true
+    };
+  } catch (err) {
+    return {
+      type: AUTH_ACTION.FORGOT_PASSWORD_ERROR,
       error: err.message
     };
   }

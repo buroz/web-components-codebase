@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsEmail, IsString } from "class-validator";
-import { RegisterRequest, LoginRequest } from "../_interfaces";
+import { RegisterRequest, LoginRequest, ForgotPasswordRequest } from "../_interfaces";
 
 export class AuthLoginForm {
   @IsEmail()
@@ -39,6 +39,17 @@ export class AuthRegisterForm {
       this.email = request.email;
       this.password = request.password;
       this.passwordAgain = request.passwordAgain;
+    }
+  }
+}
+
+export class AuthForgotPasswordForm {
+  @IsEmail()
+  public email = "";
+
+  constructor(request?: ForgotPasswordRequest) {
+    if (request) {
+      this.email = request.email;
     }
   }
 }

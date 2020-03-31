@@ -18,6 +18,7 @@ export class LoginForm extends connect(store)(LitElement) {
   @property() private error: string;
   @property() private form: AuthLoginForm = new AuthLoginForm();
   @property() private buttonDisabled: boolean = false;
+  @property() private forgotPassword: boolean = false;
 
   stateChanged(state: any) {
     this.hasError = state.auth.hasError;
@@ -56,55 +57,59 @@ export class LoginForm extends connect(store)(LitElement) {
   }
 
   render() {
-    return html`
-      <form class="form" @change=${this.formValueChanged}>
-        ${this.hasError ? this.errorAlert(this.error) : null}
+    return this.forgotPassword
+      ? html`
+          <forgot-password-form />
+        `
+      : html`
+          <form class="form" @change=${this.formValueChanged}>
+            ${this.hasError ? this.errorAlert(this.error) : null}
 
-        <div class="label-wrapper">
-          <label class="label" for="email">Email</label>
-          <input
-            class="input"
-            id="email"
-            name="email"
-            .value=${this.form.email}
-            type="email"
-            placeholder="Email"
-            autocomplete="on"
-          />
-        </div>
+            <div class="label-wrapper">
+              <label class="label" for="email">Email</label>
+              <input
+                class="input"
+                id="email"
+                name="email"
+                .value=${this.form.email}
+                type="email"
+                placeholder="Email"
+                autocomplete="on"
+              />
+            </div>
 
-        <div class="label-wrapper">
-          <label class="label password" for="password">
-            Şifre
-            <a class="forgot-link" href="./forgot-password.html">Hatırlamıyorum</a>
-          </label>
-          <input
-            class="input"
-            id="password"
-            name="password"
-            .value=${this.form.password}
-            type="password"
-            placeholder="Şifre"
-            autocomplete="on"
-          />
-        </div>
+            <div class="label-wrapper">
+              <label class="label password" for="password">
+                Şifre
+                <a class="forgot-link" @click=${(e: Event) => (this.forgotPassword = true)}>Hatırlamıyorum</a>
+              </label>
+              <input
+                class="input"
+                id="password"
+                name="password"
+                .value=${this.form.password}
+                type="password"
+                placeholder="Şifre"
+                autocomplete="on"
+              />
+            </div>
 
-        <div class="label-wrapper remember-wrapper">
-          <input type="checkbox" id="checkbox_id" />
-          <label class="remember" for="checkbox_id">Beni Hatırla</label>
-        </div>
+            <div class="label-wrapper remember-wrapper">
+              <input type="checkbox" id="checkbox_id" />
+              <label class="remember" for="checkbox_id">Beni Hatırla</label>
+            </div>
 
-        <div class="button-wrapper remember-wrapper">
-          <button
-            ?disabled=${this.buttonDisabled}
-            @click=${(e: Event) => this.handleSubmit({ email: "", password: "" })}
-            class="button"
-            type="button"
-          >
-            Giriş
-          </button>
-        </div>
-      </form>
-    `;
+            <div class="button-wrapper remember-wrapper">
+              <button
+                ?disabled=${this.buttonDisabled}
+                @click=${(e: Event) => this.handleSubmit({ email: "", password: "" })}
+                class="button"
+                type="button"
+              >
+                Giriş
+              </button>
+            </div>
+          </form>
+        `;
   }
 }

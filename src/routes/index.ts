@@ -2,11 +2,11 @@ import { Router } from "@vaadin/router";
 import { authGuard, logoutGuard } from "./guards";
 
 window.addEventListener("load", () => {
-  const router = new Router(document.querySelector("#root"));
+  const router = new Router(document.querySelector("body"));
   router.setRoutes([
     {
       path: "/",
-      component: "page-auth",
+      component: "page-home",
       action: authGuard
     },
     {
@@ -21,7 +21,6 @@ window.addEventListener("load", () => {
       path: "(.*)",
       component: "page-not-found",
       action: authGuard
-      // component: "page-not-found"
     }
   ]);
 });

@@ -1,0 +1,15 @@
+app-sidebar {
+  z-index: 666;
+}
+
+.sidebar {
+  @apply bg-white w-64 h-full shadow;
+
+  & .brand {
+    &-wrapper {
+      @apply w-full py-4;
+    }
+
+    @apply h-8 mx-auto;
+  }
+}

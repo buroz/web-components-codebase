@@ -2,6 +2,7 @@ export interface AuthState {
   hasError: boolean;
   error?: string;
   token?: string;
+  forgotPasswordStatus?: boolean;
 }
 
 export interface LoginRequest {
@@ -15,4 +16,8 @@ export interface RegisterRequest {
   email: string;
   password: string;
   passwordAgain: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
 }

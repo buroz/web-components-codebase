@@ -37,6 +37,17 @@ export const authReducer = (state = INITIAL_STATE, action: any) => {
         ...state,
         token: ""
       };
+    case AUTH_ACTION.FORGOT_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        forgotPasswordStatus: false
+      };
+    case AUTH_ACTION.FORGOT_PASSWORD_ERROR:
+      return {
+        ...state,
+        hasError: true,
+        error: action.error
+      };
     default:
       return state;
   }

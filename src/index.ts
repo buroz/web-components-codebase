@@ -1,4 +1,5 @@
 import "./scss/main.scss";
 import "./pages";
 import "./components";
-import "./router";
+import "./routes";
+// import "./ws";

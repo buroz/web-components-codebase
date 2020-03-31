@@ -2,7 +2,7 @@ import { customElement, LitElement, html, TemplateResult, property } from "lit-e
 import { connect } from "pwa-helpers";
 import { store } from "../../store";
 
-import { loginRequestAction } from "../../store/actions";
+import { loginAction } from "../../store/actions";
 
 import { AuthLoginForm } from "../../validators";
 import { buttonDisabler } from "../../utils";
@@ -38,7 +38,7 @@ export class LoginForm extends connect(store)(LitElement) {
 
   async handleSubmit(request: LoginRequest) {
     // maybe async maybe not
-    const res = await loginRequestAction(this.form);
+    const res = await loginAction(this.form);
     store.dispatch(res);
   }
 
@@ -101,7 +101,7 @@ export class LoginForm extends connect(store)(LitElement) {
             class="button"
             type="button"
           >
-            Kayıt Ol
+            Giriş
           </button>
         </div>
 

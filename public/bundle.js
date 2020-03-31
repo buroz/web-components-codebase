@@ -77,7 +77,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/";
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -85,6 +85,17 @@
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ "./config.json":
+/*!*********************!*\
+  !*** ./config.json ***!
+  \*********************/
+/*! exports provided: domain, ws, api, default */
+/***/ (function(module) {
+
+module.exports = JSON.parse("{\"domain\":\"socialmaxi.com\",\"ws\":\"ws.socialmaxi.com\",\"api\":\"api.socialmaxi.com\"}");
+
+/***/ }),
 
 /***/ "./node_modules/@vaadin/router/dist/vaadin-router.js":
 /*!***********************************************************!*\
@@ -25760,7 +25771,7 @@ const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6
 const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
 const pwa_helpers_1 = __webpack_require__(/*! pwa-helpers */ "./node_modules/pwa-helpers/pwa-helpers.js");
 const store_1 = __webpack_require__(/*! ../../store */ "./src/store/index.ts");
-const actions_1 = __webpack_require__(/*! ../../store/actions */ "./src/store/actions.ts");
+const actions_1 = __webpack_require__(/*! ../../store/actions */ "./src/store/actions/index.ts");
 const validators_1 = __webpack_require__(/*! ../../validators */ "./src/validators/index.ts");
 const utils_1 = __webpack_require__(/*! ../../utils */ "./src/utils/index.ts");
 let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit_element_1.LitElement) {
@@ -25788,7 +25799,7 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
     }
     async handleSubmit(request) {
         // maybe async maybe not
-        const res = await actions_1.loginRequestAction(this.form);
+        const res = await actions_1.loginAction(this.form);
         store_1.store.dispatch(res);
     }
     errorAlert(message) {
@@ -25849,7 +25860,7 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
             class="button"
             type="button"
           >
-            Kayıt Ol
+            Giriş
           </button>
         </div>
 
@@ -25980,6 +25991,23 @@ tslib_1.__exportStar(__webpack_require__(/*! ./auth/login-form */ "./src/compone
 
 /***/ }),
 
+/***/ "./src/config.ts":
+/*!***********************!*\
+  !*** ./src/config.ts ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+const config_json_1 = tslib_1.__importDefault(__webpack_require__(/*! ../config.json */ "./config.json"));
+exports.default = config_json_1.default;
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -25993,7 +26021,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ./scss/main.scss */ "./src/scss/main.scss");
 __webpack_require__(/*! ./pages */ "./src/pages/index.ts");
 __webpack_require__(/*! ./components */ "./src/components/index.ts");
-__webpack_require__(/*! ./router */ "./src/router.ts");
+__webpack_require__(/*! ./routes */ "./src/routes/index.ts");
+// import "./ws";
 
 
 /***/ }),
@@ -26088,10 +26117,55 @@ exports.PageNotFound = PageNotFound;
 
 /***/ }),
 
-/***/ "./src/router.ts":
-/*!***********************!*\
-  !*** ./src/router.ts ***!
-  \***********************/
+/***/ "./src/routes/guards/auth.ts":
+/*!***********************************!*\
+  !*** ./src/routes/guards/auth.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const store_1 = __webpack_require__(/*! ../../store */ "./src/store/index.ts");
+const actions_1 = __webpack_require__(/*! ../../store/actions */ "./src/store/actions/index.ts");
+exports.authGuard = (ctx, cms) => {
+    return store_1.store.getState().auth.token ? ctx.next() : cms.redirect("/auth");
+};
+exports.logoutGuard = (ctx, cms) => {
+    if (store_1.store.getState().auth.token) {
+        const res = actions_1.logoutAction();
+        store_1.store.dispatch(res);
+        cms.redirect("/auth");
+    }
+    else {
+        cms.redirect("/");
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/routes/guards/index.ts":
+/*!************************************!*\
+  !*** ./src/routes/guards/index.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+tslib_1.__exportStar(__webpack_require__(/*! ./auth */ "./src/routes/guards/auth.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./src/routes/index.ts":
+/*!*****************************!*\
+  !*** ./src/routes/index.ts ***!
+  \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26099,16 +26173,27 @@ exports.PageNotFound = PageNotFound;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const router_1 = __webpack_require__(/*! @vaadin/router */ "./node_modules/@vaadin/router/dist/vaadin-router.js");
+const guards_1 = __webpack_require__(/*! ./guards */ "./src/routes/guards/index.ts");
 window.addEventListener("load", () => {
     const router = new router_1.Router(document.querySelector("#root"));
     router.setRoutes([
+        {
+            path: "/",
+            component: "page-auth",
+            action: guards_1.authGuard
+        },
         {
             path: "/auth",
             component: "page-auth"
         },
         {
+            path: "/auth/logout",
+            action: guards_1.logoutGuard
+        },
+        {
             path: "(.*)",
-            component: "page-auth"
+            component: "page-not-found",
+            action: guards_1.authGuard
             // component: "page-not-found"
         }
     ]);
@@ -26128,71 +26213,66 @@ window.addEventListener("load", () => {
 
 /***/ }),
 
-/***/ "./src/store/actions.ts":
-/*!******************************!*\
-  !*** ./src/store/actions.ts ***!
-  \******************************/
+/***/ "./src/store/actions/auth.ts":
+/*!***********************************!*\
+  !*** ./src/store/actions/auth.ts ***!
+  \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var auth_1 = __webpack_require__(/*! ./auth */ "./src/store/auth.ts");
-exports.loginRequestAction = auth_1.loginRequestAction;
+const utils_1 = __webpack_require__(/*! ../../utils */ "./src/utils/index.ts");
+var AUTH_ACTION;
+(function (AUTH_ACTION) {
+    AUTH_ACTION["LOGIN_SUCCESS"] = "LOGIN_SUCCESS";
+    AUTH_ACTION["LOGIN_ERROR"] = "LOGIN_ERROR";
+    AUTH_ACTION["LOGOUT_SUCCESS"] = "LOGOUT_SUCCESS";
+})(AUTH_ACTION = exports.AUTH_ACTION || (exports.AUTH_ACTION = {}));
+exports.loginAction = async (request) => {
+    try {
+        const res = await utils_1.api({
+            url: `/auth/login`,
+            method: "POST",
+            data: request
+        });
+        localStorage.SetItem("token", res.token);
+        return {
+            type: AUTH_ACTION.LOGIN_SUCCESS,
+            token: res.token
+        };
+    }
+    catch (err) {
+        return {
+            type: AUTH_ACTION.LOGIN_ERROR,
+            error: err.message
+        };
+    }
+};
+exports.logoutAction = () => {
+    localStorage.removeItem("token");
+    return {
+        type: AUTH_ACTION.LOGOUT_SUCCESS
+    };
+};
 
 
 /***/ }),
 
-/***/ "./src/store/auth.ts":
-/*!***************************!*\
-  !*** ./src/store/auth.ts ***!
-  \***************************/
+/***/ "./src/store/actions/index.ts":
+/*!************************************!*\
+  !*** ./src/store/actions/index.ts ***!
+  \************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var AUTH;
-(function (AUTH) {
-    AUTH["LOGIN_SUCCESS"] = "LOGIN_SUCCESS";
-    AUTH["LOGIN_ERROR"] = "LOGIN_ERROR";
-})(AUTH = exports.AUTH || (exports.AUTH = {}));
-exports.INITIAL_STATE = {
-    hasError: false
-};
-exports.loginRequestAction = (request) => {
-    console.log(request);
-    /*
-    return {
-      type: AUTH.LOGIN_ERROR,
-      error: "errorerrorerror"
-    };
-    */
-    return {
-        type: AUTH.LOGIN_SUCCESS,
-        token: "tokentokentoken"
-    };
-};
-exports.reducer = (state = exports.INITIAL_STATE, action) => {
-    switch (action.type) {
-        case AUTH.LOGIN_SUCCESS:
-            return {
-                ...state,
-                hasError: false,
-                token: action.token
-            };
-        case AUTH.LOGIN_ERROR:
-            return {
-                ...state,
-                hasError: true,
-                error: action.error
-            };
-        default:
-            return state;
-    }
-};
+var auth_1 = __webpack_require__(/*! ./auth */ "./src/store/actions/auth.ts");
+exports.loginAction = auth_1.loginAction;
+exports.logoutAction = auth_1.logoutAction;
 
 
 /***/ }),
@@ -26208,13 +26288,104 @@ exports.reducer = (state = exports.INITIAL_STATE, action) => {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
-const auth_1 = __webpack_require__(/*! ./auth */ "./src/store/auth.ts");
+const reducers_1 = __webpack_require__(/*! ./reducers */ "./src/store/reducers/index.ts");
 const rootReducer = redux_1.combineReducers({
-    auth: auth_1.reducer
+    auth: reducers_1.authReducer
 });
 exports.store = redux_1.createStore(rootReducer, 
 // @ts-ignore
 window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+
+/***/ }),
+
+/***/ "./src/store/reducers/auth.ts":
+/*!************************************!*\
+  !*** ./src/store/reducers/auth.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const auth_1 = __webpack_require__(/*! ../actions/auth */ "./src/store/actions/auth.ts");
+exports.INITIAL_STATE = {
+    hasError: false,
+    token: localStorage.getItem("token") || ""
+};
+exports.authReducer = (state = exports.INITIAL_STATE, action) => {
+    switch (action.type) {
+        case auth_1.AUTH_ACTION.LOGIN_SUCCESS:
+            return {
+                ...state,
+                hasError: false,
+                token: action.token
+            };
+        case auth_1.AUTH_ACTION.LOGIN_ERROR:
+            return {
+                ...state,
+                hasError: true,
+                error: action.error
+            };
+        case auth_1.AUTH_ACTION.LOGOUT_SUCCESS:
+            return {
+                ...state,
+                token: ""
+            };
+        default:
+            return state;
+    }
+};
+
+
+/***/ }),
+
+/***/ "./src/store/reducers/index.ts":
+/*!*************************************!*\
+  !*** ./src/store/reducers/index.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+tslib_1.__exportStar(__webpack_require__(/*! ./auth */ "./src/store/reducers/auth.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./src/utils/apiRequest.ts":
+/*!*********************************!*\
+  !*** ./src/utils/apiRequest.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+const config_1 = tslib_1.__importDefault(__webpack_require__(/*! ../config */ "./src/config.ts"));
+async function api(requestParams) {
+    try {
+        const res = await fetch(`//${config_1.default.api}${requestParams.url}`, {
+            method: requestParams.method,
+            headers: {
+                "Content-Type": "application/json"
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(requestParams.data) // body data type must match "Content-Type" header
+        });
+        return await res.json();
+    }
+    catch (err) {
+        throw new Error(err);
+    }
+}
+exports.api = api;
 
 
 /***/ }),
@@ -26250,6 +26421,7 @@ exports.buttonDisabler = buttonDisabler;
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 tslib_1.__exportStar(__webpack_require__(/*! ./buttonDisabler */ "./src/utils/buttonDisabler.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./apiRequest */ "./src/utils/apiRequest.ts"), exports);
 
 
 /***/ }),

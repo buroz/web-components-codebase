@@ -1,15 +1,8 @@
 import io from "socket.io-client";
+import config from "./config";
 
-const socket = io("//ws.example.com/private", { secure: true });
-
-const clientsWrapper = document.getElementById("clients");
+const socket = io(`//${config.ws}/private`, { secure: true });
 
 socket.on("CLIENTS_LIST", (clients: string[]) => {
-  clientsWrapper.innerHTML = "";
-
-  clients.forEach(c => {
-    let el = document.createElement("li");
-    el.innerHTML += c;
-    clientsWrapper.append(el);
-  });
+  console.log(clients);
 });

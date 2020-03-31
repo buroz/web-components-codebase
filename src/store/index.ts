@@ -1,9 +1,9 @@
 import { createStore, combineReducers } from "redux";
 
-import { reducer as AuthReducer } from "./auth";
+import { authReducer } from "./reducers";
 
 const rootReducer = combineReducers({
-  auth: AuthReducer
+  auth: authReducer
 });
 
 export const store = createStore(

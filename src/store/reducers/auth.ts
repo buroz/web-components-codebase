@@ -20,6 +20,18 @@ export const authReducer = (state = INITIAL_STATE, action: any) => {
         hasError: true,
         error: action.error
       };
+    case AUTH_ACTION.REGISTER_SUCCESS:
+      return {
+        ...state,
+        hasError: false,
+        token: action.token
+      };
+    case AUTH_ACTION.REGISTER_ERROR:
+      return {
+        ...state,
+        hasError: true,
+        error: action.error
+      };
     case AUTH_ACTION.LOGOUT_SUCCESS:
       return {
         ...state,

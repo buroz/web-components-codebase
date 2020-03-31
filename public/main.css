@@ -625,10 +625,7 @@ video {
 .auth .form {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
-  padding-top: 1.5rem;
-  padding-bottom: 2rem;
   margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
   background-color: #fff;
   border-radius: 0.25rem;
 }
@@ -783,7 +780,7 @@ video {
   align-items: center;
 }
 
-.auth .form .signup {
+.auth .signup {
   width: 100%;
   font-weight: 600;
   text-align: center;
@@ -791,22 +788,38 @@ video {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   border-top-width: 1px;
   border-color: #edf2f7;
-}
-
-.auth .form .signup a {
-  color: #2d3748;
-  width: 100%;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  cursor: pointer;
+  color: #2d3748;
 }
 
-.auth .form .signup a:hover {
+.auth .signup-wrapper {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .auth .signup-wrapper {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .auth .signup-wrapper {
+    padding-left: 8rem;
+    padding-right: 8rem;
+  }
+}
+
+.auth .signup:hover {
   color: #718096;
 }
 
-.auth .form .copyright {
+.auth .copyright {
   width: 100%;
   text-align: center;
   margin-top: 1rem;
@@ -815,7 +828,7 @@ video {
   color: #718096;
 }
 
-.auth .form .line {
+.auth .line {
   margin-bottom: 1.5rem;
   border-top-width: 1px;
 }

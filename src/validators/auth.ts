@@ -16,7 +16,7 @@ export class AuthLoginForm {
   }
 }
 
-export class RegisterLoginForm {
+export class AuthRegisterForm {
   @IsString()
   public name = "";
 
@@ -38,6 +38,7 @@ export class RegisterLoginForm {
       this.surname = request.surname;
       this.email = request.email;
       this.password = request.password;
+      this.passwordAgain = request.passwordAgain;
     }
   }
 }

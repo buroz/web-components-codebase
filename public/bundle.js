@@ -25820,7 +25820,7 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
         ${this.hasError ? this.errorAlert(this.error) : null}
 
         <div class="label-wrapper">
-          <label class="label" for="username">Email</label>
+          <label class="label" for="email">Email</label>
           <input
             class="input"
             id="email"
@@ -25863,14 +25863,6 @@ let LoginForm = class LoginForm extends pwa_helpers_1.connect(store_1.store)(lit
             Giriş
           </button>
         </div>
-
-        <hr class="line" />
-
-        <div class="signup">
-          <a class="link" href="./register.html">Üye Ol!</a>
-        </div>
-
-        <p class="copyright">© 2020 Resclick. Tüm hakları saklıdır.</p>
       </form>
     `;
     }
@@ -25899,23 +25891,171 @@ exports.LoginForm = LoginForm;
 
 /***/ }),
 
-/***/ "./src/components/base/_layout.ts":
-/*!****************************************!*\
-  !*** ./src/components/base/_layout.ts ***!
-  \****************************************/
+/***/ "./src/components/auth/register-form.ts":
+/*!**********************************************!*\
+  !*** ./src/components/auth/register-form.ts ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
-class Layout extends lit_element_1.LitElement {
+const pwa_helpers_1 = __webpack_require__(/*! pwa-helpers */ "./node_modules/pwa-helpers/pwa-helpers.js");
+const store_1 = __webpack_require__(/*! ../../store */ "./src/store/index.ts");
+const actions_1 = __webpack_require__(/*! ../../store/actions */ "./src/store/actions/index.ts");
+const validators_1 = __webpack_require__(/*! ../../validators */ "./src/validators/index.ts");
+const utils_1 = __webpack_require__(/*! ../../utils */ "./src/utils/index.ts");
+let RegisterForm = class RegisterForm extends pwa_helpers_1.connect(store_1.store)(lit_element_1.LitElement) {
+    constructor() {
+        super(...arguments);
+        this.form = new validators_1.AuthRegisterForm();
+        this.buttonDisabled = false;
+    }
     createRenderRoot() {
         return this;
     }
-}
-exports.Layout = Layout;
+    stateChanged(state) {
+        this.hasError = state.auth.hasError;
+        this.error = state.auth.error;
+    }
+    async updateButtonState() {
+        this.buttonDisabled = await utils_1.buttonDisabler(this.form);
+    }
+    formValueChanged(e) {
+        this.form = new validators_1.AuthRegisterForm({
+            ...this.form,
+            [e.target.name]: e.target.value
+        });
+        this.updateButtonState();
+    }
+    async handleSubmit(request) {
+        // maybe async maybe not
+        const res = await actions_1.registerAction(this.form);
+        store_1.store.dispatch(res);
+    }
+    errorAlert(message) {
+        return lit_element_1.html `
+      <div class="error" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon" height="24" width="24" viewBox="0 0 24 24">
+          <path
+            d="M16.142 2l5.858 5.858v8.284l-5.858 5.858h-8.284l-5.858-5.858v-8.284l5.858-5.858h8.284zm.829-2h-9.942l-7.029 7.029v9.941l7.029 7.03h9.941l7.03-7.029v-9.942l-7.029-7.029zm-8.482 16.992l3.518-3.568 3.554 3.521 1.431-1.43-3.566-3.523 3.535-3.568-1.431-1.432-3.539 3.583-3.581-3.457-1.418 1.418 3.585 3.473-3.507 3.566 1.419 1.417z"
+          />
+        </svg>
+        <p>${message}</p>
+      </div>
+    `;
+    }
+    render() {
+        return lit_element_1.html `
+      <form class="form" @change=${this.formValueChanged}>
+        ${this.hasError ? this.errorAlert(this.error) : null}
+
+        <div class="label-wrapper">
+          <label class="label" for="name">İsim *</label>
+          <input
+            class="input"
+            id="name"
+            name="name"
+            .value=${this.form.name}
+            type="text"
+            placeholder="İsim"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="surname">Soyisim *</label>
+          <input
+            class="input"
+            id="surname"
+            name="surname"
+            .value=${this.form.surname}
+            type="text"
+            placeholder="Soyisim"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="email">Email *</label>
+          <input
+            class="input"
+            id="email"
+            name="email"
+            .value=${this.form.email}
+            type="email"
+            placeholder="Email"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="password">
+            Şifre *
+          </label>
+          <input
+            class="input"
+            id="password"
+            name="password"
+            .value=${this.form.password}
+            type="password"
+            placeholder="Şifre"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="passwordAgain">
+            Şifre Tekrar *
+          </label>
+          <input
+            class="input"
+            id="passwordAgain"
+            name="passwordAgain"
+            .value=${this.form.passwordAgain}
+            type="password"
+            placeholder="Şifre Tekrar"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="button-wrapper remember-wrapper">
+          <button
+            ?disabled=${this.buttonDisabled}
+            @click=${(e) => this.handleSubmit({ email: "", password: "", passwordAgain: "", name: "", surname: "" })}
+            class="button"
+            type="button"
+          >
+            Giriş
+          </button>
+        </div>
+      </form>
+    `;
+    }
+};
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], RegisterForm.prototype, "hasError", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", String)
+], RegisterForm.prototype, "error", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", validators_1.AuthRegisterForm)
+], RegisterForm.prototype, "form", void 0);
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], RegisterForm.prototype, "buttonDisabled", void 0);
+RegisterForm = tslib_1.__decorate([
+    lit_element_1.customElement("register-form")
+], RegisterForm);
+exports.RegisterForm = RegisterForm;
 
 
 /***/ }),
@@ -25984,9 +26124,9 @@ exports.Navbar = Navbar;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-tslib_1.__exportStar(__webpack_require__(/*! ./base/_layout */ "./src/components/base/_layout.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./base/navbar */ "./src/components/base/navbar.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./auth/login-form */ "./src/components/auth/login-form.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./auth/register-form */ "./src/components/auth/register-form.ts"), exports);
 
 
 /***/ }),
@@ -26056,8 +26196,11 @@ tslib_1.__exportStar(__webpack_require__(/*! ./page-not-found */ "./src/pages/pa
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
-const components_1 = __webpack_require__(/*! ../components */ "./src/components/index.ts");
-let PageAuth = class PageAuth extends components_1.Layout {
+let PageAuth = class PageAuth extends lit_element_1.LitElement {
+    constructor() {
+        super(...arguments);
+        this.isLogin = true;
+    }
     createRenderRoot() {
         return this;
     }
@@ -26073,7 +26216,21 @@ let PageAuth = class PageAuth extends components_1.Layout {
             <img class="brand" src="/brand.svg" alt="Socialmaxi" />
             <p class="slogan">Lorem ipsum dolor sit amet</p>
           </figure>
-          <login-form />
+          ${this.isLogin
+            ? lit_element_1.html `
+                <login-form />
+              `
+            : lit_element_1.html `
+                <register-form />
+              `}
+
+          <hr class="line" />
+          <div class="signup-wrapper">
+            <button class="signup" @click=${(e) => (this.isLogin = !this.isLogin)}>
+              ${this.isLogin ? "Üye Ol" : "Giriş Yap"}
+            </button>
+          </div>
+          <p class="copyright">© 2020 Resclick. Tüm hakları saklıdır.</p>
         </section>
         <!-- Col -->
       </div>
@@ -26081,6 +26238,10 @@ let PageAuth = class PageAuth extends components_1.Layout {
     `;
     }
 };
+tslib_1.__decorate([
+    lit_element_1.property(),
+    tslib_1.__metadata("design:type", Boolean)
+], PageAuth.prototype, "isLogin", void 0);
 PageAuth = tslib_1.__decorate([
     lit_element_1.customElement("page-auth")
 ], PageAuth);
@@ -26101,8 +26262,7 @@ exports.PageAuth = PageAuth;
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 const lit_element_1 = __webpack_require__(/*! lit-element */ "./node_modules/lit-element/lit-element.js");
-const components_1 = __webpack_require__(/*! ../components */ "./src/components/index.ts");
-let PageNotFound = class PageNotFound extends components_1.Layout {
+let PageNotFound = class PageNotFound extends lit_element_1.LitElement {
     render() {
         return lit_element_1.html `
       <h1 class="text-5xl text-gray-500 text-center">Page not found!</h1>
@@ -26229,6 +26389,8 @@ var AUTH_ACTION;
     AUTH_ACTION["LOGIN_SUCCESS"] = "LOGIN_SUCCESS";
     AUTH_ACTION["LOGIN_ERROR"] = "LOGIN_ERROR";
     AUTH_ACTION["LOGOUT_SUCCESS"] = "LOGOUT_SUCCESS";
+    AUTH_ACTION["REGISTER_SUCCESS"] = "REGISTER_SUCCESS";
+    AUTH_ACTION["REGISTER_ERROR"] = "REGISTER_ERROR";
 })(AUTH_ACTION = exports.AUTH_ACTION || (exports.AUTH_ACTION = {}));
 exports.loginAction = async (request) => {
     try {
@@ -26246,6 +26408,26 @@ exports.loginAction = async (request) => {
     catch (err) {
         return {
             type: AUTH_ACTION.LOGIN_ERROR,
+            error: err.message
+        };
+    }
+};
+exports.registerAction = async (request) => {
+    try {
+        const res = await utils_1.api({
+            url: `/auth/register`,
+            method: "POST",
+            data: request
+        });
+        localStorage.SetItem("token", res.token);
+        return {
+            type: AUTH_ACTION.REGISTER_SUCCESS,
+            token: res.token
+        };
+    }
+    catch (err) {
+        return {
+            type: AUTH_ACTION.REGISTER_ERROR,
             error: err.message
         };
     }
@@ -26272,6 +26454,7 @@ exports.logoutAction = () => {
 Object.defineProperty(exports, "__esModule", { value: true });
 var auth_1 = __webpack_require__(/*! ./auth */ "./src/store/actions/auth.ts");
 exports.loginAction = auth_1.loginAction;
+exports.registerAction = auth_1.registerAction;
 exports.logoutAction = auth_1.logoutAction;
 
 
@@ -26323,6 +26506,18 @@ exports.authReducer = (state = exports.INITIAL_STATE, action) => {
                 token: action.token
             };
         case auth_1.AUTH_ACTION.LOGIN_ERROR:
+            return {
+                ...state,
+                hasError: true,
+                error: action.error
+            };
+        case auth_1.AUTH_ACTION.REGISTER_SUCCESS:
+            return {
+                ...state,
+                hasError: false,
+                token: action.token
+            };
+        case auth_1.AUTH_ACTION.REGISTER_ERROR:
             return {
                 ...state,
                 hasError: true,
@@ -26457,7 +26652,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Object)
 ], AuthLoginForm.prototype, "password", void 0);
 exports.AuthLoginForm = AuthLoginForm;
-class RegisterLoginForm {
+class AuthRegisterForm {
     constructor(request) {
         this.name = "";
         this.surname = "";
@@ -26469,30 +26664,31 @@ class RegisterLoginForm {
             this.surname = request.surname;
             this.email = request.email;
             this.password = request.password;
+            this.passwordAgain = request.passwordAgain;
         }
     }
 }
 tslib_1.__decorate([
     class_validator_1.IsString(),
     tslib_1.__metadata("design:type", Object)
-], RegisterLoginForm.prototype, "name", void 0);
+], AuthRegisterForm.prototype, "name", void 0);
 tslib_1.__decorate([
     class_validator_1.IsString(),
     tslib_1.__metadata("design:type", Object)
-], RegisterLoginForm.prototype, "surname", void 0);
+], AuthRegisterForm.prototype, "surname", void 0);
 tslib_1.__decorate([
     class_validator_1.IsEmail(),
     tslib_1.__metadata("design:type", Object)
-], RegisterLoginForm.prototype, "email", void 0);
+], AuthRegisterForm.prototype, "email", void 0);
 tslib_1.__decorate([
     class_validator_1.IsNotEmpty({ message: "Please enter your password" }),
     tslib_1.__metadata("design:type", Object)
-], RegisterLoginForm.prototype, "password", void 0);
+], AuthRegisterForm.prototype, "password", void 0);
 tslib_1.__decorate([
     class_validator_1.IsNotEmpty({ message: "Please enter your password" }),
     tslib_1.__metadata("design:type", Object)
-], RegisterLoginForm.prototype, "passwordAgain", void 0);
-exports.RegisterLoginForm = RegisterLoginForm;
+], AuthRegisterForm.prototype, "passwordAgain", void 0);
+exports.AuthRegisterForm = AuthRegisterForm;
 
 
 /***/ }),

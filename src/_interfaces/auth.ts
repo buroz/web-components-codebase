@@ -14,4 +14,5 @@ export interface RegisterRequest {
   surname: string;
   email: string;
   password: string;
+  passwordAgain: string;
 }

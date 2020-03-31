@@ -31,7 +31,7 @@
       }
     }
 
-    @apply px-2 pt-6 pb-8 my-6 bg-white rounded;
+    @apply px-2 mt-6 bg-white rounded;
 
     @screen lg {
       @apply px-16;
@@ -110,28 +110,39 @@
 
       @apply ml-2 leading-tight text-xs text-gray-500;
     }
+  }
 
-    & .signup {
-      @apply w-full font-semibold text-center rounded shadow border-t border-gray-200;
+  & .signup {
+    &-wrapper {
+      @apply px-2;
 
-      a {
-        @apply text-gray-800;
-        @apply w-full px-6 py-4;
+      @screen lg {
+        @apply px-16;
+      }
 
-        &:hover {
-          @apply text-gray-600;
-        }
+      @screen xl {
+        @apply px-32;
       }
     }
 
-    & .copyright {
-      @apply w-full text-center mt-4;
-      @apply text-xs font-light text-gray-600;
-    }
+    @apply w-full;
+    @apply font-semibold text-center;
+    @apply rounded shadow border-t border-gray-200;
+    @apply px-6 py-4;
+    @apply cursor-pointer text-gray-800;
 
-    & .line {
-      @apply mb-6 border-t;
+    &:hover {
+      @apply text-gray-600;
     }
+  }
+
+  & .copyright {
+    @apply w-full text-center mt-4;
+    @apply text-xs font-light text-gray-600;
+  }
+
+  & .line {
+    @apply mb-6 border-t;
   }
 
   & .error {

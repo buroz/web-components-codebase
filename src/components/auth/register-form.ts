@@ -2,21 +2,21 @@ import { customElement, LitElement, html, TemplateResult, property } from "lit-e
 import { connect } from "pwa-helpers";
 import { store } from "../../store";
 
-import { loginAction } from "../../store/actions";
+import { registerAction } from "../../store/actions";
 
-import { AuthLoginForm } from "../../validators";
+import { AuthRegisterForm } from "../../validators";
 import { buttonDisabler } from "../../utils";
-import { LoginRequest } from "../../_interfaces";
+import { RegisterRequest } from "../../_interfaces";
 
-@customElement("login-form")
-export class LoginForm extends connect(store)(LitElement) {
+@customElement("register-form")
+export class RegisterForm extends connect(store)(LitElement) {
   createRenderRoot() {
     return this;
   }
 
   @property() private hasError: boolean;
   @property() private error: string;
-  @property() private form: AuthLoginForm = new AuthLoginForm();
+  @property() private form: AuthRegisterForm = new AuthRegisterForm();
   @property() private buttonDisabled: boolean = false;
 
   stateChanged(state: any) {
@@ -29,16 +29,16 @@ export class LoginForm extends connect(store)(LitElement) {
   }
 
   formValueChanged(e: { target: HTMLInputElement }) {
-    this.form = new AuthLoginForm({
+    this.form = new AuthRegisterForm({
       ...this.form,
       [e.target.name]: e.target.value
     });
     this.updateButtonState();
   }
 
-  async handleSubmit(request: LoginRequest) {
+  async handleSubmit(request: RegisterRequest) {
     // maybe async maybe not
-    const res = await loginAction(this.form);
+    const res = await registerAction(this.form);
     store.dispatch(res);
   }
 
@@ -61,7 +61,33 @@ export class LoginForm extends connect(store)(LitElement) {
         ${this.hasError ? this.errorAlert(this.error) : null}
 
         <div class="label-wrapper">
-          <label class="label" for="email">Email</label>
+          <label class="label" for="name">İsim *</label>
+          <input
+            class="input"
+            id="name"
+            name="name"
+            .value=${this.form.name}
+            type="text"
+            placeholder="İsim"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="surname">Soyisim *</label>
+          <input
+            class="input"
+            id="surname"
+            name="surname"
+            .value=${this.form.surname}
+            type="text"
+            placeholder="Soyisim"
+            autocomplete="on"
+          />
+        </div>
+
+        <div class="label-wrapper">
+          <label class="label" for="email">Email *</label>
           <input
             class="input"
             id="email"
@@ -74,9 +100,8 @@ export class LoginForm extends connect(store)(LitElement) {
         </div>
 
         <div class="label-wrapper">
-          <label class="label password" for="password">
-            Şifre
-            <a class="forgot-link" href="./forgot-password.html">Hatırlamıyorum</a>
+          <label class="label" for="password">
+            Şifre *
           </label>
           <input
             class="input"
@@ -89,15 +114,26 @@ export class LoginForm extends connect(store)(LitElement) {
           />
         </div>
 
-        <div class="label-wrapper remember-wrapper">
-          <input type="checkbox" id="checkbox_id" />
-          <label class="remember" for="checkbox_id">Beni Hatırla</label>
+        <div class="label-wrapper">
+          <label class="label" for="passwordAgain">
+            Şifre Tekrar *
+          </label>
+          <input
+            class="input"
+            id="passwordAgain"
+            name="passwordAgain"
+            .value=${this.form.passwordAgain}
+            type="password"
+            placeholder="Şifre Tekrar"
+            autocomplete="on"
+          />
         </div>
 
         <div class="button-wrapper remember-wrapper">
           <button
             ?disabled=${this.buttonDisabled}
-            @click=${(e: Event) => this.handleSubmit({ email: "", password: "" })}
+            @click=${(e: Event) =>
+              this.handleSubmit({ email: "", password: "", passwordAgain: "", name: "", surname: "" })}
             class="button"
             type="button"
           >

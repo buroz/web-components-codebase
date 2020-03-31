@@ -1,1 +1,1 @@
-export { loginAction, logoutAction } from "./auth";
+export { loginAction, registerAction, logoutAction } from "./auth";
